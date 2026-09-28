@@ -90,8 +90,23 @@
     overflow: hidden;
 
     transition:
-        border-color 0.15s ease,
-        background-color 0.15s ease;
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dayRow:hover {
+    border-color: var(--primary);
+    background-color: var(--surface-light);
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.dayRow:active {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
 }
 
 .day {
@@ -160,7 +175,7 @@
 }
 
 .weekend {
-    background-color: #050c14;
+    background-color: #040a11;
 }
 
 .weekend .day,
@@ -209,36 +224,52 @@
 }
 
 @media (max-width: 600px) {
-    .calendar {
-        padding: 12px;
-    }
+  .calendar {
+    padding: 10px;
+  }
 
-    .navigation {
-        gap: 4px;
-    }
+  .header {
+    margin-bottom: 12px;
+  }
 
-    .navigation h2 {
-        font-size: 16px;
-    }
+  .navigation {
+    grid-template-columns: 40px 40px 1fr 40px 40px;
+    gap: 4px;
+  }
 
-    .navigation button {
-        height: 36px;
-    }
+  .navigation h2 {
+    font-size: 15px;
+  }
 
-    .week {
-        gap: 4px;
-    }
+  .navigation button {
+    height: 36px;
+    padding: 0;
+  }
 
-    .day {
-        min-height: 70px;
-        gap: 4px;
-    }
+  .week {
+    gap: 4px;
+  }
 
-    .dayName {
-        font-size: 11px;
-    }
+  .dayRow {
+    height: 90px;
+  }
 
-    .dayNumber {
-        font-size: 18px;
-    }
+  .day {
+    width: 58px;
+    min-height: 0;
+    gap: 2px;
+  }
+
+  .dayName {
+    font-size: 10px;
+  }
+
+  .dayNumber {
+    font-size: 17px;
+  }
+
+  .monthName {
+    bottom: 8px;
+    font-size: 10px;
+  }
 }

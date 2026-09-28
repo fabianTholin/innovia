@@ -28,6 +28,7 @@ namespace api.Controllers
             _timeService = timeService;
         }
 
+        [Authorize(Roles="Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -208,9 +209,7 @@ namespace api.Controllers
                 return Ok(fullBooking!.ToBookingDto());
             }
 
-            return Conflict(
-                "Ingen ledig resurs vid denna tiden."
-            );
+            return Conflict("Ingen ledig resurs vid denna tiden.");
         }
     }
 }

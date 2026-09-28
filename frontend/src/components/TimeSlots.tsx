@@ -7,23 +7,31 @@ type TimeSlot = {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
-  status: "green" | "yellow" | "red" | "locked";
+  status: "green" | "yellow" | "red" | "blue" | "locked";
 };
 
 type TimeSlotsProps = {
   selectedDate?: Date;
-  selectedResourceType:
-    string | null;
+  selectedResourceType: string | null;
   selectedResourceId: number | null;
   onResourceSelect: (resourceId: number | null) => void;
   onSlotSelect: (slot: TimeSlot | null) => void;
   selectedSlot: TimeSlot | null;
   overview?: boolean;
+  refreshKey?: number;
 };
 
 type Resource = {
   resourceId: number;
   resourceType: string;
+};
+
+type Booking = {
+  bookingId: number;
+  resourceId: number;
+  resourceType: string;
+  startTime: string;
+  endTime: string;
 };
 
 const SLOT_START_HOUR = 0;
@@ -60,6 +68,7 @@ export default function TimeSlots({
   onSlotSelect,
   selectedSlot,
   overview = false,
+  refreshKey = 0,
 }: TimeSlotsProps) {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
@@ -67,6 +76,7 @@ export default function TimeSlots({
   const [error, setError] = useState("");
   const [selectedStart, setSelectedStart] = useState<TimeSlot | null>(null);
   const [chooseSpecificResource, setChooseSpecificResource] = useState(false);
+  const [myBookings, setMyBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
     async function fetchResources() {
@@ -95,11 +105,57 @@ export default function TimeSlots({
   }, [selectedResourceType]);
 
   useEffect(() => {
+    async function fetchMyBookings() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setMyBookings([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/Bookings/mine`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Kunde inte hämta mina bokningar.");
+        }
+
+        const data: Booking[] = await response.json();
+        setMyBookings(data);
+      } catch (error) {
+        console.error("Kunde inte hämta mina bokningar:", error);
+      }
+    }
+
+    fetchMyBookings();
+  }, [refreshKey]);
+
+  useEffect(() => {
     async function checkAvailability() {
-      if (!selectedDate || selectedResourceType === null) {
+      if (!selectedDate) {
         setSlots([]);
         setSelectedStart(null);
-        onSlotSelect(null);
+
+        if (!overview) {
+          onSlotSelect(null);
+        }
+
+        return;
+      }
+
+      if (selectedResourceType === null) {
+        if (overview) {
+          setSlots(createSlots(selectedDate));
+        } else {
+          setSlots([]);
+          setSelectedStart(null);
+          onSlotSelect(null);
+        }
+
         return;
       }
 
@@ -127,6 +183,20 @@ export default function TimeSlots({
             }
 
             const end = new Date(slot.endTime);
+
+            const isMyBooking = myBookings.some((booking) => {
+              const bookingStart = new Date(booking.startTime);
+              const bookingEnd = new Date(booking.endTime);
+
+              const sameTime = start < bookingEnd && end > bookingStart;
+
+              const sameResource =
+                selectedResourceId !== null
+                  ? booking.resourceId === selectedResourceId
+                  : booking.resourceType === selectedResourceType;
+
+              return sameTime && sameResource;
+            });
 
             const params = new URLSearchParams({
               startTime: start.toISOString(),
@@ -159,6 +229,14 @@ export default function TimeSlots({
               selectedResourceId,
               data,
             );
+
+            if (isMyBooking) {
+              return {
+                ...slot,
+                isAvailable: false,
+                status: "blue" as const,
+              };
+            }
 
             if (selectedResourceId !== null) {
               return {
@@ -199,7 +277,14 @@ export default function TimeSlots({
     }
 
     checkAvailability();
-  }, [selectedDate, selectedResourceId, selectedResourceType, onSlotSelect]);
+  }, [
+    selectedDate,
+    selectedResourceId,
+    selectedResourceType,
+    onSlotSelect,
+    refreshKey,
+    myBookings,
+  ]);
 
   function formatTime(dateString: string) {
     return new Date(dateString).toLocaleTimeString("sv-SE", {
@@ -232,6 +317,14 @@ export default function TimeSlots({
       setSelectedStart(startSlot);
       setError("");
       onSlotSelect(null);
+      return;
+    }
+
+    /* klick på samma starttid igen = avmarkera */
+    if (selectedStart.startTime === time) {
+      setSelectedStart(null);
+      onSlotSelect(null);
+      setError("");
       return;
     }
 
@@ -270,11 +363,16 @@ export default function TimeSlots({
     setError("");
   }
 
-  if (!selectedDate || selectedResourceType === null) {
+  if (!selectedDate) {
+    return null;
+  }
+
+  if (selectedResourceType === null && !overview) {
     return (
       <section className={styles.timeSlotsWrapper}>
         <div className={styles.heading}>
           <p className={styles.eyebrow}>Tider</p>
+
           <p className={styles.description}>
             Välj en resurs och ett datum för att se tillgängliga tider.
           </p>
@@ -317,14 +415,6 @@ export default function TimeSlots({
 
   return (
     <section className={styles.timeSlotsWrapper}>
-      <div className={styles.heading}>
-        <p className={styles.eyebrow}>Tider</p>
-
-        <p className={styles.description}>
-          Välj starttid och sluttid för din bokning
-        </p>
-      </div>
-
       <div className={styles.resourceChoice}>
         <button
           type="button"

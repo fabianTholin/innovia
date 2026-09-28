@@ -21,7 +21,7 @@ builder.Services.AddControllers()
             new System.Text.Json.Serialization.JsonStringEnumConverter()
         );
     });
-   
+
 builder.Services.AddSignalR();
 
 builder.Services.AddSwaggerGen(options =>
@@ -104,7 +104,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins("http://localhost:5173", "http://localhost:3000", "https://innovia-3-frontend-production.up.railway.app")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -117,6 +117,10 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    await dbContext.Database.MigrateAsync();
+
     await IdentitySeeder.SeedAdminAsync(scope.ServiceProvider);
 }
 

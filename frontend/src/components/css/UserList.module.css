@@ -117,3 +117,51 @@ button:active {
 .role {
     width: 30%;
 }
+
+@media (max-width: 600px) {
+    .userListWrapper {
+        padding: 16px;
+    }
+
+    .headerAndButton {
+        margin-bottom: 8px;
+    }
+
+    .headerAndButton button {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .eyebrow {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .info {
+        margin-bottom: 6px;
+        font-size: 11px;
+    }
+
+    .userRow {
+        padding: 12px 0;
+        font-size: 12px;
+    }
+
+    .email {
+        width: 75%;
+        overflow-wrap: anywhere;
+    }
+
+    .role {
+        width: 25%;
+        text-align: right;
+    }
+
+    .placeholder {
+        min-height: 80px;
+    }
+
+    .placeholder p {
+        font-size: 12px;
+    }
+}

@@ -4,8 +4,13 @@ import * as signalR from "@microsoft/signalr";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+type Resource = {
+  resourceId: number;
+  resourceType: string;
+};
+
 type ResourceAvailability = {
-  resourceType: number;
+  resourceType: string;
   totalResources: number;
   availableResources: number;
 };
@@ -18,7 +23,17 @@ export default function ResourceStatus() {
   useEffect(() => {
     const fetchResourceStatus = async () => {
       try {
-        const resourceTypes = [1, 2, 3, 4];
+        const resourcesResponse = await fetch(`${API_URL}/api/Resources`);
+
+        if (!resourcesResponse.ok) {
+          throw new Error("Kunde inte hämta resurser.");
+        }
+
+        const resources: Resource[] = await resourcesResponse.json();
+
+        const resourceTypes = [
+          ...new Set(resources.map((resource) => resource.resourceType)),
+        ];
 
         const startTime = new Date();
 
@@ -55,18 +70,19 @@ export default function ResourceStatus() {
     fetchResourceStatus();
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${API_URL}/Hubs/booking}`)
+      .withUrl(`${API_URL}/Hubs/booking`)
       .withAutomaticReconnect()
       .build();
 
     connection.on("BookingsChanged", () => {
+      console.log("SignalR Ändrad");
       fetchResourceStatus();
     });
 
     connection
       .start()
       .then(() => {
-        console.log("SignalR ansluten!");
+        console.log("SignalR Ansluten");
       })
       .catch((error) => {
         if (
@@ -84,20 +100,16 @@ export default function ResourceStatus() {
     };
   }, []);
 
-  const getResourceName = (resourceType: number) => {
+  function formatResourceType(resourceType: string) {
     switch (resourceType) {
-      case 1:
-        return "Drop-in skrivbord";
-      case 2:
-        return "Mötesrum";
-      case 3:
-        return "VR-headset";
-      case 4:
-        return "AI-server";
+      case "VRHeadset":
+        return "VR Headset";
+      case "AIServer":
+        return "AI Server";
       default:
-        return "Okänd resurs";
+        return resourceType;
     }
-  };
+  }
 
   return (
     <section className={styles.resourceStatus}>
@@ -107,7 +119,7 @@ export default function ResourceStatus() {
         {resourceStatus.map((resource) => (
           <div key={resource.resourceType} className={styles.statusCard}>
             <div>
-              <h3>{getResourceName(resource.resourceType)}</h3>
+              <h3>{formatResourceType(resource.resourceType)}</h3>
 
               <p>{resource.totalResources} st totalt</p>
             </div>

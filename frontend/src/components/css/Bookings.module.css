@@ -6,7 +6,7 @@
     background-color: var(--surface);
 
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 0 0 6px 6px;
 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -104,9 +104,12 @@ button:active {
 
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
+.resourceId {
+    width: 10%;
+}
 
 .resource {
-    width: 25%;
+    width: 20%;
 }
 
 .user {
@@ -114,7 +117,7 @@ button:active {
 }
 
 .date {
-    width: 25%;
+    width: 20%;
 }
 
 .time {
@@ -149,4 +152,85 @@ button:active {
 
 .deleteButton:active {
     transform: translateY(-50%) scale(0.97);
+}
+
+.headerAndButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.buttonGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 1000px) {
+  .buttonGroup button {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    padding: 3px 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .bookingsWrapper {
+    padding: 16px;
+  }
+
+  .info {
+    display: none;
+  }
+  .headerAndButton {
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .bookingRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+
+    padding: 10px 0 10px;
+  }
+
+  .resource,
+  .user,
+  .date,
+  .time {
+    width: 100%;
+  }
+
+  .deleteButton {
+    top: auto;
+    bottom: 10px;
+    right: 0;
+
+    transform: none;
+  }
+
+  .deleteButton:active {
+    transform: scale(0.97);
+  }
+
+  .headerAndButton button {
+    font-size: 11px;
+    padding: 3px 5px;
+    letter-spacing: 1.3px;
+  }
+
+  .buttonGroup {
+    gap: 3px;
+  }
+
+  .buttonGroup button {
+    font-size: 10px;
+    letter-spacing: 0.2px;
+    padding: 2px 3px;
+    white-space: nowrap;
+    margin: 0;
+  }
 }

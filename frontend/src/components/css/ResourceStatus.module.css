@@ -103,3 +103,48 @@
     background-color: #4fd65b;
     border-radius: 10px;
 }
+
+@media (max-width: 600px) {
+    .resourceStatus {
+        padding: 16px;
+    }
+
+    .eyebrow {
+        margin-bottom: 10px;
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .statusCards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .statusCard {
+        min-height: 140px;
+        padding: 12px;
+    }
+
+    .statusCard h3 {
+        font-size: 13px;
+    }
+
+    .statusCard p {
+        font-size: 11px;
+    }
+
+    .availability {
+        margin-bottom: 10px;
+        gap: 6px;
+        font-size: 11px;
+    }
+
+    .statusDot {
+        width: 7px;
+        height: 7px;
+    }
+
+    .progressBar {
+        height: 5px;
+    }
+}

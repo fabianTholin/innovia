@@ -114,3 +114,47 @@
     color: var(--text);
     background-color: rgba(19, 133, 226, 0.05);
 }
+
+@media (max-width: 600px) {
+    .loginPage {
+        min-height: calc(100vh - 64px);
+        padding: 30px 12px 12px;
+    }
+
+    .loginCard {
+        padding: 22px 18px;
+    }
+
+    .heading {
+        margin-bottom: 22px;
+    }
+
+    .heading h1 {
+        margin-bottom: 8px;
+        font-size: 26px;
+    }
+
+    .heading p {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .eyebrow {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .loginForm {
+        gap: 16px;
+    }
+
+    .loginButton {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .backButton {
+        padding: 11px;
+        font-size: 12px;
+    }
+}
