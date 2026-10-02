@@ -9,9 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using api.Services;
 using api.Hubs;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddControllers()
@@ -23,6 +23,14 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddSignalR();
+
+builder.Services.AddHttpClient("openai", client =>
+{
+    client.BaseAddress = new Uri("https://api.openai.com/v1/responses");
+    var apiKey = "";
+    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", apiKey);
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+});
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -87,7 +95,6 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
 
@@ -112,15 +119,12 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthorization();
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
     await dbContext.Database.MigrateAsync();
-
     await IdentitySeeder.SeedAdminAsync(scope.ServiceProvider);
 }
 
@@ -132,12 +136,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("Frontend");
-
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 app.MapHub<BookingHub>("/Hubs/Booking");
 app.Run();
