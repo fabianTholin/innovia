@@ -6,6 +6,7 @@ import Calendar from "../components/Calendar";
 import TimeSlots from "../components/TimeSlots";
 import Resources from "../components/Resources";
 import Bookings from "../components/Bookings";
+import UserChat from "../components/UserChat";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -17,7 +18,6 @@ type TimeSlot = {
 };
 
 export default function LandingPage() {
-
   const [selectedDate, setSelectedDate] = useState<Date>();
 
   const [selectedResourceType, setSelectedResourceType] = useState<
@@ -166,9 +166,9 @@ export default function LandingPage() {
   return (
     <>
       <Navbar />
-
       <main className={styles.landingPage}>
         <div className={styles.resourcesLandingWrapper}>
+          <UserChat />
           <Resources
             selectedResourceType={selectedResourceType}
             onResourceTypeSelect={(resourceType) => {
