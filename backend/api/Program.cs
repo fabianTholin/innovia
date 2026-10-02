@@ -12,6 +12,8 @@ using api.Hubs;
 using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
+DotNetEnv.Env.Load();
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddControllers()
@@ -27,7 +29,7 @@ builder.Services.AddSignalR();
 builder.Services.AddHttpClient("openai", client =>
 {
     client.BaseAddress = new Uri("https://api.openai.com/v1/responses");
-    var apiKey = "";
+    var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", apiKey);
     client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
 });
