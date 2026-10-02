@@ -26,13 +26,19 @@ namespace api.Controllers
                 input = request.question
             };
             var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+
             var response = await http.PostAsync("responses", content);
-
             var raw = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                System.Console.WriteLine("Något är fel med OpenAI-förfrågan.");
+                return BadRequest("Något gick fel, försök igen senare!");
+            }
 
-            Console.WriteLine("Raw: " + raw);
-
-            return Ok(request);
+            var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            string reply = root.GetProperty("output")[0].GetProperty("content")[0].GetProperty("text").GetString() ?? "inget svar";
+            return Ok(reply);
         }
     }
 }
