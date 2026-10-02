@@ -23,7 +23,19 @@ namespace api.Controllers
             var body = new
             {
                 model = "gpt-4.1",
-                input = request.question
+                input = new object[]
+                {
+                    new
+                    {
+                        role = "system",
+                        content = "You are a skilled IT-architect who knows your history. You can at all levels find most weak spots in a project that are difficult to detect or points that need a thourough thought, discussion and decision."
+                    },
+                    new
+                    {
+                        role = "user",
+                        content = request.question
+                    }
+                }
             };
             var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
 
