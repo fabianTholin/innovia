@@ -20,6 +20,11 @@ namespace api.Repositories
                 .Include(b => b.User)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Booking>> GetAllAsyncWithAllFields()
+        {
+            return await _context.Bookings
+                .ToListAsync();
+        }
         public async Task<Booking?> GetByIdAsync(int id)
         {
             return await _context.Bookings

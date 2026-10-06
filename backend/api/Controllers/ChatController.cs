@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -9,10 +10,11 @@ namespace api.Controllers
     public class ChatController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
-
-        public ChatController(IHttpClientFactory httpClientFactory)
+        private readonly AvailabilityService _availabilityService;
+        public ChatController(IHttpClientFactory httpClientFactory, AvailabilityService availabilityService)
         {
             _httpClientFactory = httpClientFactory;
+            _availabilityService = availabilityService;
         }
         public record ChatRequest(string question);
 
@@ -20,6 +22,7 @@ namespace api.Controllers
         public async Task<IActionResult> Chat([FromBody] ChatRequest request)
         {
             var http = _httpClientFactory.CreateClient("openai");
+            var bookings = await _availabilityService.getDataAvailabilityContext();
             var body = new
             {
                 model = "gpt-4.1",
@@ -27,8 +30,8 @@ namespace api.Controllers
                 {
                     new
                     {
-                        role = "system",
-                        content = "You are a skilled IT-architect who knows your history. You can at all levels find most weak spots in a project that are difficult to detect or points that need a thourough thought, discussion and decision."
+                        role = "developer",
+                        content = "Data availability context: \n" + bookings
                     },
                     new
                     {

@@ -1,6 +1,7 @@
 using api.Dtos.ResourceDtos;
 using api.Interfaces;
 using api.Enums;
+using System.Text.Json;
 
 namespace api.Services
 {
@@ -53,6 +54,13 @@ namespace api.Services
                 TotalResources = resources.Count,
                 AvailableResources = availableResources
             };
+        }
+
+
+        public async Task<string> getDataAvailabilityContext()
+        {
+            var bookings = await _bookingRepository.GetAllAsyncWithAllFields();
+            return JsonSerializer.Serialize(bookings);
         }
     }
 }
