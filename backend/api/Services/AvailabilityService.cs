@@ -20,6 +20,7 @@ namespace api.Services
         {
             var resource = await _resourceRepository.GetResourceAsync(resourceId);
 
+
             if (resource == null)
             {
                 return null;

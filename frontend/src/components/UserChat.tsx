@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./css/Resources.module.css";
+import styles from "./css/UserChat.module.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -20,17 +20,15 @@ export default function UserChat() {
     if (!response.ok) {
       throw new Error("Något gick fel vid förfrågan.");
     }
-    console.log(response);
     const answer: string = await response.text();
     setAnswer(answer);
-    console.log("answer: " + answer);
   }
 
   return (
-    <section className={styles.resourcesWrapper}>
+    <section className={styles.chatWrapper}>
       <div className={styles.heading}>
-        <p className={styles.eyebrow}>AI-chat</p>
-        <p>Fråga något</p>
+        <p className={styles.eyebrow}>Bokningsservice – fråga något?</p>
+          </div>
         <form onSubmit={submitQuery}>
           <input
             type="text"
@@ -38,30 +36,30 @@ export default function UserChat() {
             onChange={(event) => setQuery(event.target.value)}
             size={60}
             placeholder="När kan jag boka ett skrivbord i 4 timmar, så snart som möjligt?"
+            className={styles.inputField}
           />
-          <button type="submit">Skicka fråga</button>
+          <button type="submit" className={styles.button}>Skicka</button>
         </form>
         {responseReceived && (
-          <output
-            style={{
-              display: "inline-block",
-              width: "400px",
-              minHeight: "1.5em",
-              padding: "0.4rem 0.6rem",
-              border: "1px solid #767676",
-              borderRadius: "4px",
-              backgroundColor: "white",
-              color: "#222",
-              boxSizing: "border-box",
-              font: "inherit",
-              lineHeight: 1.4,
-              verticalAlign: "middle",
-            }}
+          <output className={styles.answer}
+            // style={{
+            //   display: "inline-block",
+            //   width: "400px",
+            //   minHeight: "1.5em",
+            //   padding: "0.4rem 0.6rem",
+            //   border: "1px solid #767676",
+            //   borderRadius: "4px",
+            //   backgroundColor: "white",
+            //   color: "#222",
+            //   boxSizing: "border-box",
+            //   font: "inherit",
+            //   lineHeight: 1.4,
+            //   verticalAlign: "middle",
+            // }}
           >
             {answer}
           </output>
         )}
-      </div>
     </section>
   );
 }
