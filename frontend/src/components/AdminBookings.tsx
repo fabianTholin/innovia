@@ -21,13 +21,6 @@ export default function AdminBookings() {
   const [showAll, setShowAll] = useState(false);
   const [showPassed, setShowPassed] = useState(false);
 
-  // const connection = new signalR.HubConnectionBuilder()
-  //   .withUrl("http://localhost:5197/Hubs/Booking")
-  //   .build();
-
-  // connection.on("BookingsChanged", () => {
-  //   console.log("Hallo from connection!");
-  // });
   const now = new Date().getTime();
 
   console.log("now: " + now);

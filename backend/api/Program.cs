@@ -121,6 +121,12 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthorization();
+
+var cs = builder.Configuration.GetConnectionString("DefaultConnection");
+var db = new Npgsql.NpgsqlConnectionStringBuilder(cs);
+Console.WriteLine($"DB config: host={db.Host}, port={db.Port}, database={db.Database}, user={db.Username}, passwordLength={db.Password.Length}");
+
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

@@ -52,6 +52,17 @@ export default function Navbar() {
           </button>
         )}
 
+        {isAdmin && location.pathname === "/admin" &&(
+          <button
+            className={styles.loginButton}
+            onClick={() =>
+              navigate(location.pathname === "/iot" ? "/" : "/iot")
+            }
+          >
+            {location.pathname === "/admin" && "IoT-vy"}
+          </button>
+        )}
+
         <button
           className={styles.loginButton}
           onClick={() => (isLoggedIn ? handleLogout() : navigate("/login"))}
