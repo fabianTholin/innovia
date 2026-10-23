@@ -2,9 +2,9 @@
     position: relative;
     width: 100%;
 
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    /* display: flex;
+    /* flex-direction: row; */
+    /* align-items: center;  */
 
     padding: 1rem 0;
 
@@ -13,4 +13,11 @@
     font-family: monospace;
 
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+ul, li{
+color: aliceblue;
+font-family:monospace;
+background-color: darkslateblue;
+
 }

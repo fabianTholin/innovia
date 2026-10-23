@@ -9,7 +9,6 @@ export default function IoTPage() {
     <main className={styles.IoTPage}>
       <Navbar />
       <button className={styles.registerButton}>En knapp</button>
-        <h6 className={styles.list}>Sensordata</h6>
       <ul className={styles.list}>
           <SensorData/>
       </ul>
