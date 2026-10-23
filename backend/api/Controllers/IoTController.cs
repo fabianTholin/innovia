@@ -9,5 +9,7 @@ namespace api.Controllers
     [ApiController]
     public class IoTController : ControllerBase
     {
+        
+        
     }
 }
