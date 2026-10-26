@@ -12,9 +12,21 @@ type Device = {
   status: string;
 };
 
+type RealtimeMeasurement = {
+  tenantSlug: string;
+  deviceId: string;
+  type: string;
+  value: number;
+  time: string;
+};
+
 export default function IoTPage() {
   const [deviceData, setDeviceData] = useState<Device[]>([]);
   const tenantId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+  const [realtimeData, setRealtimeData] = useState<RealtimeMeasurement | null>(
+    null,
+  );
+  const tenant = "innovia";
 
   useEffect(() => {
     async function GetDevices() {
@@ -33,7 +45,8 @@ export default function IoTPage() {
         .build();
 
       connection.on("measurementReceived", (data) => {
-        console.log("measurementReceived: " + (data));
+        console.log(data);
+        setRealtimeData(data);
       });
 
       try {
@@ -43,30 +56,61 @@ export default function IoTPage() {
         console.error("Fel i SignalR-anslutningen", error);
       }
       try {
-        await connection.invoke("JoinTenant", "innovia");
-        console.log("Tenant ansluten");
+        await connection.invoke("JoinTenant", tenant);
+        console.log(tenant + " ansluten");
       } catch (error) {
-        console.error("Kunde inte ansluta tenant", error);
+        console.error("Kunde inte ansluta " + tenant, error);
         await connection.stop();
       }
     }
     GetMessages();
-
   }, []);
+
+//  var latest = await db.Measurements.Where(m => m.DeviceId == deviceId).OrderByDescending(m => m.Time).Take(5).ToListAsync();
 
   function DeviceLIst() {
     const listItems = deviceData.map((device) => (
-      <li key={device.id} className={styles.list}>
+      <li key={device.id}>
         serial: {device.serial}, id: {device.id}
       </li>
     ));
-    return <ul>{listItems}</ul>;
+    return <ul>Registrerade enheter{listItems}</ul>;
+  }
+  function RealtimeDataOutput() {
+    if (realtimeData != null) {
+      return (
+        <div>
+          <table>
+            <caption>Realtidsdata enheter</caption>
+            <thead>
+              <tr>
+                <th>enhet</th>
+                <th>tid</th>
+                <th>värde</th>
+                <th>typ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {realtimeData != null && (
+                <tr>
+                  <td>{realtimeData?.deviceId}</td>
+                  <td>{realtimeData?.time}</td>
+                  <td>{realtimeData?.value}</td>
+                  <td>{realtimeData?.type}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
   }
 
   return (
-    <main className={styles.IoTPage}>
+    <main>
       <Navbar />
       {DeviceLIst()}
+      {RealtimeDataOutput()}
     </main>
   );
 }

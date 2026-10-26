@@ -1,4 +1,4 @@
-.IoTPage {
+main {
   min-height: calc(100vh - 80px);
   display: flex;
   align-items: flex-start;
@@ -7,43 +7,53 @@
   background:
     radial-gradient(circle at top, rgba(0, 153, 255, 0.12), transparent 35%),
     var(--background);
+  color: #1597ff;
 }
 
-.list{
+.li {
   position: relative;
-    width: 100%;
-
-    /* display: flex;
-    /* flex-direction: row; */
-    /* align-items: center;  */
-
-    /* padding: 1rem 0; */
-
-    color: var(--text);
-    font-size: 10px;
-    font-family: monospace;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.registerButton {
   width: 100%;
-  max-width: 1100px;
-  margin: 0 auto 20px;
-  padding: 13px 18px;
 
-  background: transparent;
-  border: 1px solid var(--primary);
-  border-radius: 4px;
+  /* display: flex;
+    /* flex-direction: row; */
+  /* align-items: center;  */
 
-  color: var(--primary);
-  font-size: 14px;
-  font-weight: 600;
+  /* padding: 1rem 0; */
 
-  cursor: crosshair;
+  font-size: 10px;
+  font-family: monospace;
 
-  transition:
-    border-color 0.2s ease,
-    color 0.2s ease,
-    background-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
+
+.listHeading {
+  position: relative;
+  width: 100%;
+
+  /* display: flex;
+    /* flex-direction: row; */
+  /* align-items: center;  */
+
+  /* padding: 1rem 0; */
+  list-style-type: armenian;
+  font-size: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+caption,
+thead,
+th,
+td {
+  color: #1597ff;
+  font-size: 10;
+  text-align: left;
+}
+
+td, table {
+  font-family: monospace;
+  color: #4eea7d;
+  border: 1px solid #1597ff;
+  padding: 5px;
+}
+
