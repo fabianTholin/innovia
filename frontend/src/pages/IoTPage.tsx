@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import * as signalR from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 
+const tenant = "innovia";
 type Device = {
   id: string;
   tenantId: string;
@@ -13,8 +14,8 @@ type Device = {
 };
 
 type RealtimeMeasurement = {
-  tenantSlug: string;
   deviceId: string;
+  tenantSlug: string;
   type: string;
   value: number;
   time: string;
@@ -23,10 +24,9 @@ type RealtimeMeasurement = {
 export default function IoTPage() {
   const [deviceData, setDeviceData] = useState<Device[]>([]);
   const tenantId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
-  const [realtimeData, setRealtimeData] = useState<RealtimeMeasurement | null>(
-    null,
-  );
-  const tenant = "innovia";
+  const [realtimeMeasurements, setRealTimeMeasurements] = useState<
+    RealtimeMeasurement[]
+  >([]);
 
   useEffect(() => {
     async function GetDevices() {
@@ -39,14 +39,18 @@ export default function IoTPage() {
     }
     GetDevices();
 
+    function AddToList(data: RealtimeMeasurement) {
+      setRealTimeMeasurements((previous) => [data, ...previous].slice(0, 22));
+    }
+
     async function GetMessages() {
       const connection = new signalR.HubConnectionBuilder()
         .withUrl("http://localhost:5103/hub/telemetry")
         .build();
 
       connection.on("measurementReceived", (data) => {
+        AddToList(data);
         console.log(data);
-        setRealtimeData(data);
       });
 
       try {
@@ -66,70 +70,59 @@ export default function IoTPage() {
     GetMessages();
   }, []);
 
-//  var latest = await db.Measurements.Where(m => m.DeviceId == deviceId).OrderByDescending(m => m.Time).Take(5).ToListAsync();
-
-  function DeviceLIst() {
-    const listItems = deviceData.map((device) => (
-      <li key={device.id}>
-        serial: {device.serial}, id: {device.id}
-      </li>
+  function ListDevices() {
+    <table>
+      <thead></thead>
+      <tbody>
+        
+      </tbody>
+    </table>;
+    const devices = deviceData.map((device) => (
+      <tr key={device.id}>
+        serial: {device.serial}, id: {device.id},
+      </tr>
     ));
-    return <ul>Registrerade enheter{listItems}</ul>;
+
+    return <ul>Registrerade enheter{devices}</ul>;
   }
+
   function RealtimeDataOutput() {
-    if (realtimeData != null) {
-      return (
-        <div>
-          <table>
-            <caption>Realtidsdata enheter</caption>
-            <thead>
-              <tr>
-                <th>enhet</th>
-                <th>tid</th>
-                <th>värde</th>
-                <th>typ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {realtimeData != null && (
-                <tr>
-                  <td>{realtimeData?.deviceId}</td>
-                  <td>{realtimeData?.time}</td>
-                  <td>{realtimeData?.value}</td>
-                  <td>{realtimeData?.type}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      );
+    if (realtimeMeasurements.length === 0) {
+      return <p>Väntar på realtidsdata.</p>;
     }
+    return (
+      <div>
+        <table>
+          <caption>Realtidsdata</caption>
+          <div className={styles.list}></div>
+          <thead>
+            <tr>
+              <th>enhet</th>
+              <th>tid</th>
+              <th>värde</th>
+              <th>typ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {realtimeMeasurements.map((measurement, index) => (
+              <tr key={`${measurement.deviceId}–${measurement.time}–${index}`}>
+                <td>{measurement.deviceId}</td>
+                <td>{measurement.time}</td>
+                <td>{measurement.value}</td>
+                <td>{measurement.type}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
   }
 
   return (
     <main>
       <Navbar />
-      {DeviceLIst()}
+      {ListDevices()}
       {RealtimeDataOutput()}
     </main>
   );
 }
-
-// tenants/innovia/devices/dev-101/measurements
-// public record RealtimeMeasurement(
-//     string TenantSlug,
-//     System.Guid DeviceId,
-//     string Type,
-//     double Value,
-//     System.DateTimeOffset Time
-// );
-
-// type RealtimeMeasurement = {
-//   tenantSlug: string;
-//   deviceId: string;
-//   type: string;
-//   value: number;
-//   time: string;
-// };
-
-// const [realtimeMeasurement, setRealtimeMeasurement] = useState<RealtimeMeasurement>();
