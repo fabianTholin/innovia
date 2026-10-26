@@ -71,50 +71,49 @@ export default function IoTPage() {
   }, []);
 
   function ListDevices() {
-    <table>
-      <thead></thead>
-      <tbody>
-        
-      </tbody>
-    </table>;
-    const devices = deviceData.map((device) => (
-      <tr key={device.id}>
-        serial: {device.serial}, id: {device.id},
-      </tr>
-    ));
-
-    return <ul>Registrerade enheter{devices}</ul>;
+    return (
+      <table>
+        <caption>{tenant}: Registrerade enheter </caption>
+        <thead>
+          <tr>
+            <th>serial</th>
+            <th>rum</th>
+            <th>id</th>
+            <th>tid</th>
+            <th>värde</th>
+            <th>typ</th>
+          </tr>
+        </thead>
+        {deviceData.map((device) => (
+          <tr key={device.id}>
+            <td>{device.serial}</td>
+            <td>{device.roomId}</td>
+            <td>{device.id}</td>
+            {RealtimeDataOutput(device.id)}
+          </tr>
+        ))}
+        <tbody></tbody>
+      </table>
+    );
   }
 
-  function RealtimeDataOutput() {
-    if (realtimeMeasurements.length === 0) {
-      return <p>Väntar på realtidsdata.</p>;
-    }
+  function RealtimeDataOutput(id: string) {
+    const rTM = realtimeMeasurements.find((m) => m.deviceId === id);
+    const twinRTM = realtimeMeasurements.find((m)=>m.deviceId === id && m.type != rTM?.type)
+    
     return (
-      <div>
-        <table>
-          <caption>Realtidsdata</caption>
-          <div className={styles.list}></div>
-          <thead>
-            <tr>
-              <th>enhet</th>
-              <th>tid</th>
-              <th>värde</th>
-              <th>typ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {realtimeMeasurements.map((measurement, index) => (
-              <tr key={`${measurement.deviceId}–${measurement.time}–${index}`}>
-                <td>{measurement.deviceId}</td>
-                <td>{measurement.time}</td>
-                <td>{measurement.value}</td>
-                <td>{measurement.type}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <section>
+        <td>{rTM?.time}</td>
+        <td>{rTM?.value}</td>
+        <td>{rTM?.type}</td>
+        <tr>
+
+        <td>{twinRTM?.time}</td>
+        <td>{twinRTM?.value}</td>
+        <td>{twinRTM?.type}</td>
+        </tr>
+
+      </section>
     );
   }
 
@@ -122,7 +121,6 @@ export default function IoTPage() {
     <main>
       <Navbar />
       {ListDevices()}
-      {RealtimeDataOutput()}
     </main>
   );
 }
