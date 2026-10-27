@@ -40,7 +40,7 @@ export default function IoTPage() {
     GetDevices();
 
     function AddToList(data: RealtimeMeasurement) {
-      setRealTimeMeasurements((previous) => [data, ...previous].slice(0, 22));
+      setRealTimeMeasurements((previous) => [data, ...previous].slice(0, 50));
     }
 
     async function GetMessages() {
@@ -50,7 +50,6 @@ export default function IoTPage() {
 
       connection.on("measurementReceived", (data) => {
         AddToList(data);
-        console.log(data);
       });
 
       try {
@@ -75,7 +74,7 @@ export default function IoTPage() {
       <table>
         <caption>{tenant}: Registrerade enheter </caption>
         <thead>
-          <tr>
+          <tr className={styles.row}>
             <th>serial</th>
             <th>rum</th>
             <th>id</th>
@@ -99,27 +98,33 @@ export default function IoTPage() {
 
   function RealtimeDataOutput(id: string) {
     const rTM = realtimeMeasurements.find((m) => m.deviceId === id);
-    const twinRTM = realtimeMeasurements.find((m)=>m.deviceId === id && m.type != rTM?.type)
-    
-    return (
-      <section>
-        <td>{rTM?.time}</td>
-        <td>{rTM?.value}</td>
-        <td>{rTM?.type}</td>
-        <tr>
-
-        <td>{twinRTM?.time}</td>
-        <td>{twinRTM?.value}</td>
-        <td>{twinRTM?.type}</td>
-        </tr>
-
-      </section>
+    const twinRTM = realtimeMeasurements.find(
+      (m) => m.deviceId === id && m.type != rTM?.type,
     );
+    if (rTM != undefined) {
+      return (
+        <section>
+          <td>{rTM?.time}</td>
+          <td>{rTM?.type}</td>
+          <td>{rTM?.value}</td>
+          <tr>
+            <td>{twinRTM?.time}</td>
+            <td>{twinRTM?.type}</td>
+            <td>{twinRTM?.value.toFixed(1)}</td>
+          </tr>
+        </section>
+      );
+    } else
+      return (
+        <td>
+          <i>Ingen data</i>
+        </td>
+      );
   }
 
   return (
     <main>
-      <Navbar />
+      <Navbar/>
       {ListDevices()}
     </main>
   );

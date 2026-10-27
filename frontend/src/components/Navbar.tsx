@@ -28,7 +28,6 @@ export default function Navbar() {
   return (
     <nav className={styles.navbar}>
       <h1 className={styles.logo}>Innovia</h1>
-
       <div className={styles.buttonWrapper}>
         {isLoggedIn && location.pathname === "/" && (
           <button
